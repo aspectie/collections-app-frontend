@@ -6,7 +6,7 @@ import { Button, Form, Input } from 'antd'
 
 import axios from '@/lib/axios'
 
-type TSingUpResponse = {
+type TSingInRespones = {
   data: {
     access_token: string
   }
@@ -14,8 +14,8 @@ type TSingUpResponse = {
 
 const onSubmit = async (payload: { email: string; password: string }) => {
   try {
-    const { data } = await axios.post<string, TSingUpResponse>(
-      '/auth/sign-up',
+    const { data } = await axios.post<string, TSingInRespones>(
+      '/auth/sign-in',
       payload
     )
 
@@ -27,6 +27,7 @@ const onSubmit = async (payload: { email: string; password: string }) => {
     }
   } catch (e) {
     console.log(e)
+    return
   }
 }
 
@@ -34,7 +35,7 @@ const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo)
 }
 
-function SignUp() {
+function SignIn() {
   return (
     <>
       <Form
@@ -78,32 +79,6 @@ function SignUp() {
           <Input.Password />
         </Form.Item>
 
-        <Form.Item
-          className="w-full"
-          label="Confirm password"
-          name="confirm-password"
-          dependencies={['password']}
-          hasFeedback
-          rules={[
-            {
-              required: true,
-              message: 'Please, confirm your password!'
-            },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve()
-                }
-                return Promise.reject(
-                  new Error('The new password that you entered do not match!')
-                )
-              }
-            })
-          ]}
-        >
-          <Input.Password />
-        </Form.Item>
-
         <Form.Item noStyle={true}>
           <Button
             size="large"
@@ -119,4 +94,4 @@ function SignUp() {
   )
 }
 
-export default SignUp
+export default SignIn
