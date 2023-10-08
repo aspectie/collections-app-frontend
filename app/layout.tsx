@@ -1,5 +1,6 @@
 import './globals.css'
 import type { Metadata } from 'next'
+import StyledComponentsRegistry from '../lib/AntdRegistry'
 
 export const metadata: Metadata = {
   title: 'Auth app'
@@ -12,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+      </body>
     </html>
   )
 }
