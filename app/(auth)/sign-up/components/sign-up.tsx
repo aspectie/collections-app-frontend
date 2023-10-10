@@ -20,7 +20,7 @@ const onSubmit = async (payload: { email: string; password: string }) => {
     )
 
     if (data?.access_token) {
-      setCookie(null, '_token', data.access_token, {
+      setCookie(null, '__token', data.access_token, {
         path: '/'
       })
       location.href = '/dashboard'
