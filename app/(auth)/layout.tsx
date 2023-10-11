@@ -1,4 +1,5 @@
 import React from 'react'
+import { Content } from 'antd/es/layout/layout'
 
 export default function AuthLayout({
   children
@@ -6,8 +7,11 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex justify-center items-center h-full w-screen">
+    <Content
+      className="flex justify-center items-center w-screen"
+      style={{ height: '100vh' }}
+    >
       {children}
-    </div>
+    </Content>
   )
 }
