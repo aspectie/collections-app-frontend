@@ -1,41 +1,22 @@
 'use client'
-
 import React from 'react'
-import { setCookie } from 'nookies'
 import { Button, Form, Input } from 'antd'
-
-import axios from '@/lib/axios'
-
-type TSingInRespones = {
-  data: {
-    access_token: string
-  }
-}
-
-const onSubmit = async (payload: { email: string; password: string }) => {
-  try {
-    const { data } = await axios.post<string, TSingInRespones>(
-      '/auth/sign-in',
-      payload
-    )
-
-    if (data?.access_token) {
-      setCookie(null, '__token', data.access_token, {
-        path: '/'
-      })
-      location.href = '/dashboard'
-    }
-  } catch (e) {
-    console.log(e)
-    return
-  }
-}
 
 const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo)
 }
 
-function SignIn() {
+const onSubmit = async (payload: { email: string; password: string }) => {
+  const res = await fetch('api/auth/sign-in', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  })
+  if (res.ok) {
+    location.href = '/dashboard'
+  }
+}
+
+export const SignIn = () => {
   return (
     <>
       <Form
@@ -43,6 +24,10 @@ function SignIn() {
         className="flex justify-end flex-wrap"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
+        initialValues={{
+          email: 'a@mail.ru',
+          password: 'a'
+        }}
         onFinish={onSubmit}
         onFinishFailed={onFinishFailed}
         autoComplete="off"

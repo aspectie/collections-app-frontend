@@ -1,14 +1,12 @@
 import axios from 'axios'
-import { parseCookies } from 'nookies'
+import { cookies } from 'next/headers'
 
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_BACKEND_API_URL
 
 axios.interceptors.request.use((config) => {
-  if (typeof window !== 'undefined') {
-    const { _token } = parseCookies()
+  const token = cookies().get('__token')?.value
 
-    config.headers.Authorization = 'Bearer ' + _token
-  }
+  config.headers.Authorization = `Bearer ${token}`
 
   return config
 })
