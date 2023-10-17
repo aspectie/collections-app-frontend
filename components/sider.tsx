@@ -1,44 +1,24 @@
-'use client'
-
 import React from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import axios from '@/lib/axios'
 
-import { Menu, MenuProps } from 'antd'
+import { TUser } from '@/types/user'
+
 import Sider from 'antd/es/layout/Sider'
 import { SiderProfile } from './sider-profile'
+import { SiderMenu } from './sider-menu'
 
-const items: MenuProps['items'] = [
-  {
-    label: 'Home',
-    key: '/'
-  },
-  {
-    label: 'Dashboard',
-    key: '/dashboard'
-  }
-]
-
-function CustomSider() {
-  const router = useRouter()
-  const path = usePathname()
-
-  const onClick: MenuProps['onClick'] = (e) => {
-    router.push(e.key)
-  }
+async function CustomSider() {
+  const { data } = await axios.get<TUser>('/users/me')
 
   return (
     <Sider
       trigger={null}
       className="p-2"
     >
-      <Menu
-        theme="dark"
-        onClick={onClick}
-        selectedKeys={[path]}
-        mode="vertical"
-        items={items}
-      />
-      <SiderProfile />
+      <div className="flex flex-col justify-between h-full">
+        <SiderMenu />
+        <SiderProfile user={data} />
+      </div>
     </Sider>
   )
 }

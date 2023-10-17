@@ -2,6 +2,12 @@
 
 import React from 'react'
 
-export function SiderProfile() {
-  return <div>123</div>
+import { TUser } from '@/types/user'
+
+export function SiderProfile({ user }: { user: TUser }) {
+  return (
+    <div className="p-2">
+      <span className="text-white">Hello, {user.name}!</span>
+    </div>
+  )
 }
