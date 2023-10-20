@@ -1,7 +1,12 @@
 'use client'
 
+import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Table } from 'antd'
-import React from 'react'
+
+import { TUser } from '@/types/user'
+
+import { Toolbar } from './dashboard-toolbar'
 
 const columns = [
   {
@@ -24,12 +29,83 @@ const columns = [
   }
 ]
 
-export function DashboardTable({ data }: { data: any }) {
+export function DashboardTable({ data }: { data: TUser[] }) {
+  const router = useRouter()
+  const [selectedRows, setSelectedRows] = useState<TUser[]>([])
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (_selectedRowKeys: React.Key[], _selectedRows: TUser[]) => {
+      setSelectedRowKeys(_selectedRowKeys)
+      setSelectedRows(_selectedRows)
+    }
+  }
+
+  function onBlock() {
+    if (selectedRows.length > 0) {
+      Promise.allSettled(
+        selectedRows.map((user) => {
+          fetch(`api/users/${user._id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ isBlocked: true })
+          })
+        })
+      ).then(() => {
+        setSelectedRowKeys([])
+        router.refresh()
+      })
+    }
+  }
+
+  function onUnblock() {
+    if (selectedRows.length > 0) {
+      Promise.allSettled(
+        selectedRows.map((user) => {
+          fetch(`api/users/${user._id}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ isBlocked: false })
+          })
+        })
+      ).then(() => {
+        setSelectedRowKeys([])
+        router.refresh()
+      })
+    }
+  }
+
+  function onDelete() {
+    if (selectedRows.length > 0) {
+      Promise.allSettled(
+        selectedRows.map((user) => {
+          fetch(`api/users/${user._id}`, {
+            method: 'DELETE'
+          })
+        })
+      ).then(() => {
+        setSelectedRowKeys([])
+        router.refresh()
+      })
+    }
+  }
+
   return (
-    <Table
-      rowKey="_id"
-      dataSource={data}
-      columns={columns}
-    />
+    <>
+      <div className="mb-6">
+        <Toolbar
+          eventHandlers={{
+            onBlock,
+            onUnblock,
+            onDelete
+          }}
+        />
+      </div>
+      <Table
+        rowKey="_id"
+        dataSource={data}
+        columns={columns}
+        rowSelection={{ ...rowSelection, type: 'checkbox' }}
+      />
+    </>
   )
 }
