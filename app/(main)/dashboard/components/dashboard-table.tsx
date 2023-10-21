@@ -42,50 +42,47 @@ export function DashboardTable({ data }: { data: TUser[] }) {
     }
   }
 
-  function onBlock() {
+  async function onBlock() {
     if (selectedRows.length > 0) {
-      Promise.allSettled(
+      await Promise.allSettled(
         selectedRows.map((user) => {
-          fetch(`api/users/${user._id}`, {
+          return fetch(`api/users/${user._id}`, {
             method: 'PATCH',
             body: JSON.stringify({ isBlocked: true })
           })
         })
-      ).then(() => {
-        setSelectedRowKeys([])
-        router.refresh()
-      })
+      )
+      setSelectedRowKeys([])
+      router.refresh()
     }
   }
 
-  function onUnblock() {
+  async function onUnblock() {
     if (selectedRows.length > 0) {
-      Promise.allSettled(
+      await Promise.allSettled(
         selectedRows.map((user) => {
-          fetch(`api/users/${user._id}`, {
+          return fetch(`api/users/${user._id}`, {
             method: 'PATCH',
             body: JSON.stringify({ isBlocked: false })
           })
         })
-      ).then(() => {
-        setSelectedRowKeys([])
-        router.refresh()
-      })
+      )
+      setSelectedRowKeys([])
+      router.refresh()
     }
   }
 
-  function onDelete() {
+  async function onDelete() {
     if (selectedRows.length > 0) {
-      Promise.allSettled(
+      await Promise.allSettled(
         selectedRows.map((user) => {
-          fetch(`api/users/${user._id}`, {
+          return fetch(`api/users/${user._id}`, {
             method: 'DELETE'
           })
         })
-      ).then(() => {
-        setSelectedRowKeys([])
-        router.refresh()
-      })
+      )
+      setSelectedRowKeys([])
+      router.refresh()
     }
   }
 
