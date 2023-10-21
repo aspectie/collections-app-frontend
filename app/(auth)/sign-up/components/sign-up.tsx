@@ -1,32 +1,16 @@
 'use client'
 
 import React from 'react'
-import { setCookie } from 'nookies'
 import { Button, Form, Input } from 'antd'
 
-import axios from '@/lib/axios'
-
-type TSingUpResponse = {
-  data: {
-    access_token: string
-  }
-}
-
 const onSubmit = async (payload: { email: string; password: string }) => {
-  try {
-    const { data } = await axios.post<string, TSingUpResponse>(
-      '/auth/sign-up',
-      payload
-    )
+  const res = await fetch('api/auth/sign-up', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  })
 
-    if (data?.access_token) {
-      setCookie(null, '__token', data.access_token, {
-        path: '/'
-      })
-      location.href = '/dashboard'
-    }
-  } catch (e) {
-    console.log(e)
+  if (res.ok) {
+    location.href = '/dashboard'
   }
 }
 
