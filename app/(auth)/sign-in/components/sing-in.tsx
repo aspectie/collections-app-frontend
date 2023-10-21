@@ -1,10 +1,6 @@
 'use client'
 import React from 'react'
-import { Button, Form, Input } from 'antd'
-
-const onFinishFailed = (errorInfo: any) => {
-  console.log('Failed:', errorInfo)
-}
+import { Button, Form, Input, notification } from 'antd'
 
 const onSubmit = async (payload: { email: string; password: string }) => {
   const res = await fetch('api/auth/sign-in', {
@@ -13,6 +9,9 @@ const onSubmit = async (payload: { email: string; password: string }) => {
   })
   if (res.ok) {
     location.href = '/dashboard'
+  } else {
+    const { message } = await res.json()
+    notification.error({ message })
   }
 }
 
@@ -29,7 +28,6 @@ export const SignIn = () => {
           password: 'a'
         }}
         onFinish={onSubmit}
-        onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
         <Form.Item
