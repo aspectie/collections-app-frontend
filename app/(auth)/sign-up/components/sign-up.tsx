@@ -1,24 +1,27 @@
 'use client'
 
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import { Button, Form, Input } from 'antd'
-
-const onSubmit = async (payload: { email: string; password: string }) => {
-  const res = await fetch('api/auth/sign-up', {
-    method: 'POST',
-    body: JSON.stringify(payload)
-  })
-
-  if (res.ok) {
-    location.href = '/dashboard'
-  }
-}
 
 const onFinishFailed = (errorInfo: any) => {
   console.log('Failed:', errorInfo)
 }
 
 function SignUp() {
+  const router = useRouter()
+
+  const onSubmit = async (payload: { email: string; password: string }) => {
+    const res = await fetch('api/auth/sign-up', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+
+    if (res.ok) {
+      router.push('/dashboard')
+    }
+  }
+
   return (
     <>
       <Form

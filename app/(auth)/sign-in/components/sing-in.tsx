@@ -1,21 +1,24 @@
 'use client'
 import React from 'react'
+import { useRouter } from 'next/navigation'
 import { Button, Form, Input, notification } from 'antd'
 
-const onSubmit = async (payload: { email: string; password: string }) => {
-  const res = await fetch('api/auth/sign-in', {
-    method: 'POST',
-    body: JSON.stringify(payload)
-  })
-  if (res.ok) {
-    location.href = '/dashboard'
-  } else {
-    const { message } = await res.json()
-    notification.error({ message })
-  }
-}
-
 export const SignIn = () => {
+  const router = useRouter()
+
+  const onSubmit = async (payload: { email: string; password: string }) => {
+    const res = await fetch('api/auth/sign-in', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+    if (res.ok) {
+      router.push('/dashboard')
+    } else {
+      const { message } = await res.json()
+      notification.error({ message })
+    }
+  }
+
   return (
     <>
       <Form
@@ -23,10 +26,6 @@ export const SignIn = () => {
         className="flex justify-end flex-wrap"
         labelCol={{ span: 24 }}
         wrapperCol={{ span: 24 }}
-        initialValues={{
-          email: 'a@mail.ru',
-          password: 'a'
-        }}
         onFinish={onSubmit}
         autoComplete="off"
       >
