@@ -50,6 +50,20 @@ function SignUp() {
 
         <Form.Item
           className="w-full"
+          label="Name"
+          name="name"
+          rules={[
+            {
+              required: true,
+              message: 'Please, input your name!'
+            }
+          ]}
+        >
+          <Input className="w-full" />
+        </Form.Item>
+
+        <Form.Item
+          className="w-full"
           label="Password"
           name="password"
           rules={[
