@@ -20,6 +20,16 @@ const columns = [
     key: 'email'
   },
   {
+    title: 'Last login',
+    dataIndex: 'loggedInAt',
+    key: 'loggedInAt',
+    render: (date: string) => {
+      const _date = new Date(date)
+
+      return _date.toLocaleString()
+    }
+  },
+  {
     title: 'Status',
     dataIndex: 'isBlocked',
     key: 'isBlocked',
