@@ -12,7 +12,7 @@ export const SignIn = () => {
       body: JSON.stringify(payload)
     })
     if (res.ok) {
-      router.push('/dashboard')
+      router.push('/')
     } else {
       const { message } = await res.json()
       notification.error({ message })
