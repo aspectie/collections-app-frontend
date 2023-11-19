@@ -16,7 +16,7 @@ async function CustomSider() {
       className="p-2"
     >
       <div className="flex flex-col justify-between h-full">
-        <SiderMenu />
+        <SiderMenu user={data} />
         <SiderProfile user={data} />
       </div>
     </Sider>

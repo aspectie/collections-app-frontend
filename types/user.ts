@@ -5,4 +5,5 @@ export type TUser = {
   password: string
   createdAt: string
   isBlocked: boolean
+  isAdmin: boolean
 }

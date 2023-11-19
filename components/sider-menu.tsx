@@ -4,8 +4,9 @@ import React from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 
 import { Menu, MenuProps } from 'antd'
+import { TUser } from '@/types/user'
 
-const items: MenuProps['items'] = [
+let items: Exclude<MenuProps['items'], undefined> = [
   {
     label: 'Home',
     key: '/'
@@ -16,9 +17,15 @@ const items: MenuProps['items'] = [
   }
 ]
 
-export async function SiderMenu() {
+export function SiderMenu({ user }: { user: TUser }) {
   const router = useRouter()
   const path = usePathname()
+
+  if (!user.isAdmin) {
+    items = items.filter((item) => {
+      return item?.key !== '/admin'
+    })
+  }
 
   const onClick: MenuProps['onClick'] = (e) => {
     router.push(e.key)
