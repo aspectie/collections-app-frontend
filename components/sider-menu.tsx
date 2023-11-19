@@ -14,6 +14,10 @@ let items: Exclude<MenuProps['items'], undefined> = [
   {
     label: 'Admin',
     key: '/admin'
+  },
+  {
+    label: 'Collections',
+    key: '/collections'
   }
 ]
 
