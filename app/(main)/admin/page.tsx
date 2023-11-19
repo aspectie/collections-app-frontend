@@ -3,17 +3,17 @@ import axios from '@/lib/axios'
 
 import { TUser } from '@/types/user'
 
-import { DashboardTable } from './components/dashboard-table'
+import { AdminTable } from './components/admin-table'
 
-async function DashboardPage() {
+async function AdminPage() {
   const { data } = await axios.get<TUser[]>('/users')
 
   return (
     <>
       <h1 className="text-2xl mb-10">User management</h1>
-      <DashboardTable data={data} />
+      <AdminTable data={data} />
     </>
   )
 }
 
-export default DashboardPage
+export default AdminPage

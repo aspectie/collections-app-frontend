@@ -6,7 +6,7 @@ import { Table } from 'antd'
 
 import { TUser } from '@/types/user'
 
-import { Toolbar } from './dashboard-toolbar'
+import { Toolbar } from './admin-toolbar'
 
 const columns = [
   {
@@ -39,7 +39,7 @@ const columns = [
   }
 ]
 
-export function DashboardTable({ data }: { data: TUser[] }) {
+export function AdminTable({ data }: { data: TUser[] }) {
   const router = useRouter()
   const [selectedRows, setSelectedRows] = useState<TUser[]>([])
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])

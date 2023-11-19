@@ -11,8 +11,8 @@ const items: MenuProps['items'] = [
     key: '/'
   },
   {
-    label: 'Dashboard',
-    key: '/dashboard'
+    label: 'Admin',
+    key: '/admin'
   }
 ]
 
