@@ -6,10 +6,18 @@ export function Toolbar({
 }: {
   eventHandlers: {
     onDelete: () => void
+    onAdd: () => void
   }
 }) {
   return (
     <>
+      <Button
+        className="mr-4"
+        type="primary"
+        onClick={eventHandlers.onAdd}
+      >
+        Add
+      </Button>
       <Button
         type="primary"
         danger

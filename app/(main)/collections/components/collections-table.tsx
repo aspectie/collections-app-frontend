@@ -2,12 +2,13 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Table } from 'antd'
+import { Table, notification } from 'antd'
 
 import { TCollection } from '@/types/collection'
 
 import { Toolbar } from './collections-toolbar'
 import { TCategory } from '@/types/category'
+import { AddCollectionModal } from './collections-add-modal'
 
 const columns = [
   {
@@ -46,6 +47,49 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
   const [selectedRows, setSelectedRows] = useState<TCollection[]>([])
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
 
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+
+  const handleAddOk = async (payload: TCollection) => {
+    let filteredData: Partial<TCollection> = {}
+
+    // TODO: Fix types
+    for (const [key, value] of Object.entries(payload)) {
+      if (typeof value !== 'undefined') {
+        filteredData[key as keyof TCollection] = value
+      }
+    }
+
+    const usersResponse = await fetch('api/users')
+    if (usersResponse.ok) {
+      const me = await usersResponse.json()
+      filteredData.user = me._id
+    } else {
+      const { message } = await usersResponse.json()
+      notification.error({ message })
+    }
+
+    const addCollectionResponse = await fetch('api/collections', {
+      method: 'POST',
+      body: JSON.stringify(filteredData)
+    })
+
+    if (addCollectionResponse.ok) {
+      setIsAddModalOpen(false)
+      router.refresh()
+    } else {
+      const { message } = await addCollectionResponse.json()
+      notification.error({ message })
+    }
+  }
+
+  const handleAddCancel = () => {
+    setIsAddModalOpen(false)
+  }
+
+  const onAdd = () => {
+    setIsAddModalOpen(true)
+  }
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (_selectedRowKeys: React.Key[], _selectedRows: TCollection[]) => {
@@ -74,7 +118,8 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
       <div className="mb-6">
         <Toolbar
           eventHandlers={{
-            onDelete
+            onDelete,
+            onAdd
           }}
         />
       </div>
@@ -83,6 +128,11 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
         dataSource={data}
         columns={columns}
         rowSelection={{ ...rowSelection, type: 'checkbox' }}
+      />
+      <AddCollectionModal
+        isModalOpen={isAddModalOpen}
+        handleOk={handleAddOk}
+        handleCancel={handleAddCancel}
       />
     </>
   )
