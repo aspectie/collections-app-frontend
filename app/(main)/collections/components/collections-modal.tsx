@@ -5,17 +5,20 @@ import { TCategory } from '@/types/category'
 
 const { TextArea } = Input
 
-export function AddCollectionModal({
+export function CollectionModal({
   isModalOpen,
   handleOk,
-  handleCancel
+  handleCancel,
+  data
 }: {
   isModalOpen: boolean
   handleOk: (payload: TCollection) => void
   handleCancel: () => void
+  data: TCollection | {}
 }) {
   const [form] = Form.useForm()
   const [categories, setCategories] = useState<TCategory[]>([])
+  const [fieldsData, setFieldsData] = useState<any>([])
 
   useEffect(() => {
     fetch('api/categories').then(async (res) => {
@@ -24,6 +27,25 @@ export function AddCollectionModal({
       setCategories(data)
     })
   }, [])
+
+  useEffect(() => {
+    let fieldobjects = []
+
+    for (const [key, value] of Object.entries(data)) {
+      if (typeof value === 'object') {
+        fieldobjects.push({
+          name: key,
+          value: value?._id
+        })
+      } else {
+        fieldobjects.push({
+          name: key,
+          value
+        })
+      }
+    }
+    form.setFields(fieldobjects)
+  }, [isModalOpen])
 
   // TODO: Create a separate tab for custom fields
   return (
@@ -49,12 +71,13 @@ export function AddCollectionModal({
             onClick={() => form.submit()}
             htmlType="submit"
           >
-            Submit
+            Save
           </Button>
         ]}
       >
         <Form
           form={form}
+          fields={fieldsData}
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 18 }}
           layout="horizontal"
@@ -70,7 +93,7 @@ export function AddCollectionModal({
             label="Theme"
             name="theme"
           >
-            <Select>
+            <Select value={form.getFieldValue('theme')}>
               {categories.map((category) => {
                 return (
                   <Select.Option

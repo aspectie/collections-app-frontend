@@ -13,3 +13,16 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
     throw new NextResponse('Internal error', { status: 400 })
   }
 }
+
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const body = await req.json()
+    console.log(body)
+    const {data} = await axios.patch<TCollection>(`/collections/${params.id}`, body)
+    
+    return NextResponse.json(data);
+  } catch (e) {
+    console.log(e)
+    throw new NextResponse('Internal error', { status: 400 })
+  }
+}

@@ -2,54 +2,71 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Table, notification } from 'antd'
+import { Button, Table, notification } from 'antd'
 
 import { TCollection } from '@/types/collection'
 
 import { Toolbar } from './collections-toolbar'
 import { TCategory } from '@/types/category'
-import { AddCollectionModal } from './collections-add-modal'
-
-const columns = [
-  {
-    title: 'Image',
-    dataIndex: 'image',
-    key: 'image',
-    render: (image_url: string) => {
-      return image_url ? <img src={image_url} /> : <div>No image</div>
-    }
-  },
-  {
-    title: 'Title',
-    dataIndex: 'title',
-    key: 'title'
-  },
-  {
-    title: 'Theme',
-    dataIndex: 'theme',
-    key: 'theme',
-    render: (category: TCategory) => {
-      return category.name
-    }
-  },
-  {
-    title: 'Description',
-    dataIndex: 'description',
-    key: 'description',
-    render: (description: string) => {
-      return description ? description : <div>No desc</div>
-    }
-  }
-]
+import { CollectionModal } from './collections-modal'
 
 export function CollectionsTable({ data }: { data: TCollection[] }) {
   const router = useRouter()
   const [selectedRows, setSelectedRows] = useState<TCollection[]>([])
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([])
+  const [currentRecord, setCurrentRecord] = useState<TCollection | {}>({})
 
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const handleAddOk = async (payload: TCollection) => {
+  const columns = [
+    {
+      title: 'Image',
+      dataIndex: 'image',
+      key: 'image',
+      render: (image_url: string) => {
+        return image_url ? <img src={image_url} /> : <div>No image</div>
+      }
+    },
+    {
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title'
+    },
+    {
+      title: 'Theme',
+      dataIndex: 'theme',
+      key: 'theme',
+      render: (category: TCategory) => {
+        return category.name
+      }
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      render: (description: string) => {
+        return description ? description : <div>No desc</div>
+      }
+    },
+    {
+      title: 'Action',
+      dataIndex: 'action',
+      key: 'action',
+      render: (id: string, record: any) => {
+        return <Button onClick={() => onEdit(record)}>Edit</Button>
+      }
+    }
+  ]
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: (_selectedRowKeys: React.Key[], _selectedRows: TCollection[]) => {
+      setSelectedRowKeys(_selectedRowKeys)
+      setSelectedRows(_selectedRows)
+    }
+  }
+
+  const handleOk = async (payload: TCollection) => {
     let filteredData: Partial<TCollection> = {}
 
     // TODO: Fix types
@@ -68,34 +85,42 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
       notification.error({ message })
     }
 
-    const addCollectionResponse = await fetch('api/collections', {
-      method: 'POST',
-      body: JSON.stringify(filteredData)
-    })
+    let collectionResponse
+    if (currentRecord._id) {
+      collectionResponse = await fetch(`api/collections/${currentRecord._id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(filteredData)
+      })
+    } else {
+      collectionResponse = await fetch('api/collections', {
+        method: 'POST',
+        body: JSON.stringify(filteredData)
+      })
+    }
+    console.log(collectionResponse)
 
-    if (addCollectionResponse.ok) {
-      setIsAddModalOpen(false)
+    if (collectionResponse.ok) {
+      setIsModalOpen(false)
+      setCurrentRecord({})
       router.refresh()
     } else {
-      const { message } = await addCollectionResponse.json()
+      const { message } = await collectionResponse.json()
       notification.error({ message })
     }
   }
 
-  const handleAddCancel = () => {
-    setIsAddModalOpen(false)
+  const handleCancel = () => {
+    setCurrentRecord({})
+    setIsModalOpen(false)
   }
 
   const onAdd = () => {
-    setIsAddModalOpen(true)
+    setIsModalOpen(true)
   }
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: (_selectedRowKeys: React.Key[], _selectedRows: TCollection[]) => {
-      setSelectedRowKeys(_selectedRowKeys)
-      setSelectedRows(_selectedRows)
-    }
+  function onEdit(record: TCollection) {
+    setCurrentRecord(record)
+    setIsModalOpen(true)
   }
 
   async function onDelete() {
@@ -129,10 +154,11 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
         columns={columns}
         rowSelection={{ ...rowSelection, type: 'checkbox' }}
       />
-      <AddCollectionModal
-        isModalOpen={isAddModalOpen}
-        handleOk={handleAddOk}
-        handleCancel={handleAddCancel}
+      <CollectionModal
+        isModalOpen={isModalOpen}
+        handleOk={handleOk}
+        handleCancel={handleCancel}
+        data={currentRecord}
       />
     </>
   )
