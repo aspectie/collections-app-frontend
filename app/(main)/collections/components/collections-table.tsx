@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Table, notification } from 'antd'
+import Image from 'next/image'
 
 import { TCollection } from '@/types/collection'
 
@@ -23,8 +24,15 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
       title: 'Image',
       dataIndex: 'image',
       key: 'image',
-      render: (image_url: string) => {
-        return image_url ? <img src={image_url} /> : <div>No image</div>
+      render: (image_url: string, record: TCollection) => {
+        return image_url ? (
+          <Image
+            src={image_url}
+            alt={`Collection ${record.title} image`}
+          />
+        ) : (
+          <div>No image</div>
+        )
       }
     },
     {
@@ -52,7 +60,7 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
       title: 'Action',
       dataIndex: 'action',
       key: 'action',
-      render: (id: string, record: any) => {
+      render: (id: string, record: TCollection) => {
         return <Button onClick={() => onEdit(record)}>Edit</Button>
       }
     }
@@ -67,9 +75,8 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
   }
 
   const handleOk = async (payload: TCollection) => {
-    let filteredData: Partial<TCollection> = {}
+    let filteredData: Partial<Record<keyof TCollection, any>> = {}
 
-    // TODO: Fix types
     for (const [key, value] of Object.entries(payload)) {
       if (typeof value !== 'undefined') {
         filteredData[key as keyof TCollection] = value
@@ -86,7 +93,7 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
     }
 
     let collectionResponse
-    if (currentRecord._id) {
+    if ('_id' in currentRecord) {
       collectionResponse = await fetch(`api/collections/${currentRecord._id}`, {
         method: 'PATCH',
         body: JSON.stringify(filteredData)
@@ -97,7 +104,6 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
         body: JSON.stringify(filteredData)
       })
     }
-    console.log(collectionResponse)
 
     if (collectionResponse.ok) {
       setIsModalOpen(false)
@@ -127,7 +133,6 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
     if (selectedRows.length > 0) {
       await Promise.allSettled(
         selectedRows.map((collection) => {
-          console.log(collection)
           return fetch(`api/collections/${collection._id}`, {
             method: 'DELETE'
           })
