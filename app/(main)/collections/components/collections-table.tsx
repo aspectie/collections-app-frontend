@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Table, notification } from 'antd'
+import Link from 'next/link'
 import Image from 'next/image'
+import { Button, Table, notification } from 'antd'
 
 import { TCollection } from '@/types/collection'
 
@@ -38,7 +39,10 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
     {
       title: 'Title',
       dataIndex: 'title',
-      key: 'title'
+      key: 'title',
+      render: (title: string, record: TCollection) => {
+        return <Link href={`/collections/${record._id}`}>{title}</Link>
+      }
     },
     {
       title: 'Theme',
