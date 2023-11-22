@@ -23,6 +23,10 @@ export async function middleware(request: NextRequest) {
   if (!hasToken && !(isSignIn || isSignUp)) {
     return NextResponse.redirect(new URL('/sign-in', request.nextUrl))
   }
+  
+  if (request.nextUrl.pathname.startsWith('/admin') && !data.isAdmin) {
+    return NextResponse.redirect(new URL('/', request.nextUrl))
+  }
 }
  
 export const config = {
