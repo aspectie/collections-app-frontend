@@ -21,7 +21,9 @@ export function CollectionModal({
   const [fieldsData, setFieldsData] = useState<any>([])
 
   useEffect(() => {
-    fetch('api/categories').then(async (res) => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/categories`
+    ).then(async (res) => {
       const data = await res.json()
 
       setCategories(data)

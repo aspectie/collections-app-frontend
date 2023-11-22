@@ -12,10 +12,13 @@ function SignUp() {
   const router = useRouter()
 
   const onSubmit = async (payload: { email: string; password: string }) => {
-    const res = await fetch('api/auth/sign-up', {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    })
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/auth/sign-up`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      }
+    )
 
     if (res.ok) {
       router.push('/')

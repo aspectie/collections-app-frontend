@@ -56,10 +56,13 @@ export function AdminTable({ data }: { data: TUser[] }) {
     if (selectedRows.length > 0) {
       await Promise.allSettled(
         selectedRows.map((user) => {
-          return fetch(`api/users/${user._id}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ isBlocked: true })
-          })
+          return fetch(
+            `${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/users/${user._id}`,
+            {
+              method: 'PATCH',
+              body: JSON.stringify({ isBlocked: true })
+            }
+          )
         })
       )
       setSelectedRowKeys([])
@@ -71,7 +74,7 @@ export function AdminTable({ data }: { data: TUser[] }) {
     if (selectedRows.length > 0) {
       await Promise.allSettled(
         selectedRows.map((user) => {
-          return fetch(`api/users/${user._id}`, {
+          return fetch(`${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/users/${user._id}`, {
             method: 'PATCH',
             body: JSON.stringify({ isBlocked: false })
           })
@@ -86,7 +89,7 @@ export function AdminTable({ data }: { data: TUser[] }) {
     if (selectedRows.length > 0) {
       await Promise.allSettled(
         selectedRows.map((user) => {
-          return fetch(`api/users/${user._id}`, {
+          return fetch(`${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/users/${user._id}`, {
             method: 'DELETE'
           })
         })

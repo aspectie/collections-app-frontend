@@ -11,9 +11,12 @@ export function SiderProfile({ user }: { user: TUser }) {
   const router = useRouter()
 
   async function onClick() {
-    await fetch('api/auth/sign-out', {
-      method: 'POST'
-    })
+    await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/auth/sign-out`,
+      {
+        method: 'POST'
+      }
+    )
     router.refresh()
   }
   return (

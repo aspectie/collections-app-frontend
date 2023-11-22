@@ -4,12 +4,12 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Table, notification } from 'antd'
 
-// import { Toolbar } from './collections-toolbar'
-import { TCategory } from '@/types/category'
 import { TItem } from '@/types/item'
 import { TCollection } from '@/types/collection'
+
 import { NO_VALUE } from '@/constants'
-// import { CollectionModal } from './collections-modal'
+import { Toolbar } from '@/components/table-toolbar'
+import { ItemModal } from './items-modal'
 
 export function ItemsTable({
   data,
@@ -59,7 +59,6 @@ export function ItemsTable({
     //   }
     // }
   ]
-  console.log(data)
   for (const [key, value] of Object.entries(collection)) {
     if (key.search('enabled') > -1 && value) {
       const columnId = key.split('_')[0]
@@ -71,7 +70,6 @@ export function ItemsTable({
         dataIndex: columnId,
         key: columnId,
         render: (value) => {
-          debugger
           return value ? String(value) : NO_VALUE
         }
       })
@@ -87,40 +85,43 @@ export function ItemsTable({
   }
 
   const handleOk = async (payload: TItem) => {
-    // let filteredData: Partial<Record<keyof TItem, any>> = {}
-    // for (const [key, value] of Object.entries(payload)) {
-    //   if (typeof value !== 'undefined') {
-    //     filteredData[key as keyof TItem] = value
-    //   }
-    // }
-    // const usersResponse = await fetch('api/users')
-    // if (usersResponse.ok) {
-    //   const me = await usersResponse.json()
-    //   filteredData.user = me._id
-    // } else {
-    //   const { message } = await usersResponse.json()
-    //   notification.error({ message })
-    // }
-    // let collectionResponse
-    // if ('_id' in currentRecord) {
-    //   collectionResponse = await fetch(`api/collections/${currentRecord._id}`, {
-    //     method: 'PATCH',
-    //     body: JSON.stringify(filteredData)
-    //   })
-    // } else {
-    //   collectionResponse = await fetch('api/collections', {
-    //     method: 'POST',
-    //     body: JSON.stringify(filteredData)
-    //   })
-    // }
-    // if (collectionResponse.ok) {
-    //   setIsModalOpen(false)
-    //   setCurrentRecord({})
-    //   router.refresh()
-    // } else {
-    //   const { message } = await collectionResponse.json()
-    //   notification.error({ message })
-    // }
+    let filteredData: Partial<Record<keyof TItem, any>> = {}
+    for (const [key, value] of Object.entries(payload)) {
+      if (typeof value !== 'undefined') {
+        filteredData[key as keyof TItem] = value
+      }
+    }
+    debugger
+
+    filteredData._collection = collection._id
+
+    let itemResponse
+    if ('_id' in currentRecord) {
+      itemResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/items/${currentRecord._id}`,
+        {
+          method: 'PATCH',
+          body: JSON.stringify(filteredData)
+        }
+      )
+    } else {
+      itemResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/items`,
+        {
+          method: 'POST',
+          body: JSON.stringify(filteredData)
+        }
+      )
+    }
+
+    if (itemResponse.ok) {
+      setIsModalOpen(false)
+      setCurrentRecord({})
+      router.refresh()
+    } else {
+      const { message } = await itemResponse.json()
+      notification.error({ message })
+    }
   }
 
   const handleCancel = () => {
@@ -138,28 +139,33 @@ export function ItemsTable({
   }
 
   async function onDelete() {
-    // if (selectedRows.length > 0) {
-    //   await Promise.allSettled(
-    //     selectedRows.map((collection) => {
-    //       return fetch(`api/collections/${collection._id}`, {
-    //         method: 'DELETE'
-    //       })
-    //     })
-    //   )
-    //   setSelectedRowKeys([])
-    //   router.refresh()
-    // }
+    if (selectedRows.length > 0) {
+      await Promise.allSettled(
+        selectedRows.map((item) => {
+          debugger
+          return fetch(
+            `${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/items/${item._id}`,
+            {
+              method: 'DELETE'
+            }
+          )
+        })
+      )
+      setSelectedRowKeys([])
+      router.refresh()
+    }
   }
 
   return (
     <>
       <div className="mb-6">
-        {/* <Toolbar
+        <Toolbar
+          buttons={['add', 'delete']}
           eventHandlers={{
             onDelete,
             onAdd
           }}
-        /> */}
+        />
       </div>
       <Table
         rowKey="_id"
@@ -167,12 +173,12 @@ export function ItemsTable({
         columns={columns}
         rowSelection={{ ...rowSelection, type: 'checkbox' }}
       />
-      {/* <CollectionModal
+      <ItemModal
         isModalOpen={isModalOpen}
         handleOk={handleOk}
         handleCancel={handleCancel}
         data={currentRecord}
-      /> */}
+      />
     </>
   )
 }
