@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
   }
   
   if (request.nextUrl.pathname.startsWith('/admin') && !data.isAdmin) {
-    return NextResponse.redirect(new URL('/', request.nextUrl))
+    return NextResponse.redirect(new URL('/dashboard', request.nextUrl))
   }
 }
  

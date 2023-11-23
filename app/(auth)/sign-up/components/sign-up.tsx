@@ -21,7 +21,7 @@ function SignUp() {
     )
 
     if (res.ok) {
-      router.push('/')
+      router.push('/dashboard')
     }
   }
 
