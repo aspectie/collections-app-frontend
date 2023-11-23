@@ -1,12 +1,16 @@
 import React from 'react'
-import axios from '@/lib/axios'
 
 import { TCollection } from '@/types/collection'
 
 import { CollectionsTable } from './components/collections-table'
+import { axiosSafeGet } from '@/utils/axiosSafeGet'
 
 async function CollectionsPage() {
-  const { data } = await axios.get<TCollection[]>('/collections/me')
+  const data = await axiosSafeGet<TCollection[]>('/collection/me')
+
+  if ('error' in data) {
+    throw new Error(String(data.error))
+  }
 
   return (
     <>
