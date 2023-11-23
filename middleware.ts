@@ -14,12 +14,18 @@ export async function middleware(request: NextRequest) {
     }
   )
   const data = await res.json()
+  console.log('data:')
+  console.log(data)
 
   if (data.error && !(isSignIn || isSignUp)) {
     request.cookies.delete('__token')
   }
   
   const hasToken = request.cookies.has('__token')
+  console.log('hasToken:')
+  console.log(hasToken)
+  console.log('isSignIn:')
+  console.log(isSignIn)
   if (!hasToken && !(isSignIn || isSignUp)) {
     return NextResponse.redirect(new URL('/sign-in', request.nextUrl))
   }
