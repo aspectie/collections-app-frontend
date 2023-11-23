@@ -2,14 +2,15 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, Table, notification } from 'antd'
+import Link from 'next/link'
 import Image from 'next/image'
+import { Button, Table, notification } from 'antd'
 
 import { TCollection } from '@/types/collection'
 
-import { Toolbar } from './collections-toolbar'
 import { TCategory } from '@/types/category'
 import { CollectionModal } from './collections-modal'
+import { Toolbar } from '@/components/table-toolbar'
 
 export function CollectionsTable({ data }: { data: TCollection[] }) {
   const router = useRouter()
@@ -38,7 +39,10 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
     {
       title: 'Title',
       dataIndex: 'title',
-      key: 'title'
+      key: 'title',
+      render: (title: string, record: TCollection) => {
+        return <Link href={`/collections/${record._id}`}>{title}</Link>
+      }
     },
     {
       title: 'Theme',
@@ -83,7 +87,7 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
       }
     }
 
-    const usersResponse = await fetch('api/users')
+    const usersResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/users`)
     if (usersResponse.ok) {
       const me = await usersResponse.json()
       filteredData.user = me._id
@@ -94,12 +98,12 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
 
     let collectionResponse
     if ('_id' in currentRecord) {
-      collectionResponse = await fetch(`api/collections/${currentRecord._id}`, {
+      collectionResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/collections/${currentRecord._id}`, {
         method: 'PATCH',
         body: JSON.stringify(filteredData)
       })
     } else {
-      collectionResponse = await fetch('api/collections', {
+      collectionResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/collections`, {
         method: 'POST',
         body: JSON.stringify(filteredData)
       })
@@ -133,7 +137,7 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
     if (selectedRows.length > 0) {
       await Promise.allSettled(
         selectedRows.map((collection) => {
-          return fetch(`api/collections/${collection._id}`, {
+          return fetch(`${process.env.NEXT_PUBLIC_BASE_NEXT_SERVER_API_URL}/api/collections/${collection._id}`, {
             method: 'DELETE'
           })
         })
@@ -147,6 +151,7 @@ export function CollectionsTable({ data }: { data: TCollection[] }) {
     <>
       <div className="mb-6">
         <Toolbar
+          buttons={['add', 'delete']}
           eventHandlers={{
             onDelete,
             onAdd
