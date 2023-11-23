@@ -29,7 +29,10 @@ export function ItemsTable({
     title: string
     dataIndex: string
     key: string
-    render?: (text: string | string[]) => string
+    render?: (
+      text: string | string[],
+      record: TItem
+    ) => string | React.JSX.Element
   }
 
   const columns: TColumn[] = [
@@ -50,14 +53,6 @@ export function ItemsTable({
           : NO_VALUE
       }
     }
-    // {
-    //   title: 'Action',
-    //   dataIndex: 'action',
-    //   key: 'action',
-    //   render: (id: string, record: TItem) => {
-    //     return <Button onClick={() => onEdit(record)}>Edit</Button>
-    //   }
-    // }
   ]
   for (const [key, value] of Object.entries(collection)) {
     if (key.search('enabled') > -1 && value) {
@@ -75,6 +70,14 @@ export function ItemsTable({
       })
     }
   }
+  columns.push({
+    title: 'Action',
+    dataIndex: 'action',
+    key: 'action',
+    render: (_, record: TItem) => {
+      return <Button onClick={() => onEdit(record)}>Edit</Button>
+    }
+  })
 
   const rowSelection = {
     selectedRowKeys,
@@ -178,6 +181,7 @@ export function ItemsTable({
         handleOk={handleOk}
         handleCancel={handleCancel}
         data={currentRecord}
+        collection={collection}
       />
     </>
   )

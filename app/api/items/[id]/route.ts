@@ -5,7 +5,6 @@ import { TItem } from "@/types/item";
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    console.log(params.id)
     const {data} = await axios.delete<TItem>(`/items/${params.id}`)
     
     return NextResponse.json(data);
