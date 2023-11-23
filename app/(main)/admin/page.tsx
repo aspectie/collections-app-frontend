@@ -1,12 +1,16 @@
 import React from 'react'
-import axios from '@/lib/axios'
 
 import { TUser } from '@/types/user'
 
 import { AdminTable } from './components/admin-table'
+import { axiosSafeGet } from '@/utils/axiosSafeGet'
 
 async function AdminPage() {
-  const { data } = await axios.get<TUser[]>('/users')
+  const data = await axiosSafeGet<TUser[]>('/users')
+
+  if ('error' in data) {
+    throw new Error(String(data.error))
+  }
 
   return (
     <>
