@@ -15,7 +15,7 @@ export const SignIn = () => {
       }
     )
     if (res.ok) {
-      router.push('/')
+      router.push('/dashboard')
     } else {
       const { message } = await res.json()
       notification.error({ message })

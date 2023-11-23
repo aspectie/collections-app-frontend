@@ -8,8 +8,8 @@ import { TUser } from '@/types/user'
 
 let items: Exclude<MenuProps['items'], undefined> = [
   {
-    label: 'Home',
-    key: '/'
+    label: 'Dashboard',
+    key: '/dashboard'
   },
   {
     label: 'Admin',
