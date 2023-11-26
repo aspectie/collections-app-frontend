@@ -6,10 +6,8 @@ import CustomSider from '@/components/sider'
 function MainLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      <Layout>
-        <CustomSider />
-        <Content className="p-4">{children}</Content>
-      </Layout>
+      <CustomSider />
+      <Content className="p-4">{children}</Content>
     </>
   )
 }

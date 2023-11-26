@@ -19,7 +19,12 @@ export default function RootLayout({
     >
       <body className="h-full">
         <StyledComponentsRegistry>
-          <Layout className="h-full">{children}</Layout>
+          <Layout
+            className="h-full"
+            hasSider={true}
+          >
+            {children}
+          </Layout>
         </StyledComponentsRegistry>
       </body>
     </html>
