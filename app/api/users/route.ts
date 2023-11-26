@@ -1,10 +1,12 @@
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const cookieStore = cookies()
-    const token = cookieStore.get('__token')
+    const token = req.cookies.get('__token')
+
+    if (!token || !token.value) {
+      return NextResponse.json([]);
+    }
 
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_BACKEND_API_URL}/users/me`, {
       headers: {
